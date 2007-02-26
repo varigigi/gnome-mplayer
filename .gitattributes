@@ -1,1 +1,45 @@
 * text=auto !eol
+/AUTHORS -text
+/COPYING -text
+/ChangeLog -text
+DOCS/tech/dbus.txt -text
+/INSTALL -text
+/Makefile.am -text
+/Makefile.in -text
+/NEWS -text
+/README -text
+/aclocal.m4 -text
+/config.guess -text
+/config.h -text
+/config.h.in -text
+/config.sub -text
+/configure -text
+/configure.in -text
+/depcomp -text
+/gnome-mplayer.desktop -text
+/gnome-mplayer.png -text svneol=unset#unset
+/install-sh -text
+/ltmain.sh -text
+/missing -text
+/mkinstalldirs -text
+pixmaps/gnome_mplayer.xpm -text
+po/ChangeLog -text
+po/Makefile.in.in -text
+po/POTFILES.in -text
+po/en.gmo -text svneol=unset#unset
+po/en.po -text
+po/es.gmo -text svneol=unset#unset
+po/es.po -text
+po/gnome-mplayer.pot -text
+src/Makefile.am -text
+src/Makefile.in -text
+src/common.h -text
+src/dbus-interface.c -text
+src/dbus-interface.h -text
+src/gui.c -text
+src/gui.h -text
+src/main.c -text
+src/support.c -text
+src/support.h -text
+src/thread.c -text
+src/thread.h -text
