@@ -1,4 +1,16 @@
 Development
+0.4.3	Mar 12, 2007
+	Fix pause problem when volume is changed
+	Switch to using control_id for communication between browser and player
+	Implement DBUS method GetCacheSize
+	Implement DBUS signal SetCachePercent
+	Implement more DBUS methods GetTime, GetDuration, GetPercent
+	Implement more DBUS methods GetFullScreen, GetShowControls
+	Implement DBUS introspection and several method calls.
+	Allow setting cache size using slider bar in preferences dialog
+	Fix update-po process
+	DBus methods FastForward, FastReverse, Seek
+	Update volume control so that we can set it before the media starts playing
 	More GNOMEification
 	Added Quit to the right click menu
 	Changed file selector to GNOME selector (Louis-Francis Ratté-Boulianne)

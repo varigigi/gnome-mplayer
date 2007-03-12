@@ -124,7 +124,7 @@ gboolean thread_reader(GIOChannel * source, GIOCondition condition, gpointer dat
 			return FALSE;
 		}
 	} 
-    // printf("READ(%i): %s\n",strlen(mplayer_output->str),mplayer_output->str);
+    //printf("READ(%i): %s\n",strlen(mplayer_output->str),mplayer_output->str);
 
 	
     if (strstr(mplayer_output->str, "(Quit)") != NULL) {
@@ -147,6 +147,7 @@ gboolean thread_reader(GIOChannel * source, GIOCondition condition, gpointer dat
 		if (g_ascii_strcasecmp(vm,"x11") == 0)
 			g_idle_add(hookup_x11_events,NULL);
         videopresent = 1;
+		g_idle_add(set_volume_from_slider,NULL);
     }
 
     if (strstr(mplayer_output->str, "Video: no video") != NULL) {
@@ -158,6 +159,7 @@ gboolean thread_reader(GIOChannel * source, GIOCondition condition, gpointer dat
 		idledata->y = actual_y;
 		idledata->videopresent = 0;
 		g_idle_add(resize_window,idledata);
+		g_idle_add(set_volume_from_slider,NULL);
 		
     }
 
@@ -171,19 +173,20 @@ gboolean thread_reader(GIOChannel * source, GIOCondition condition, gpointer dat
 
     if (strstr(mplayer_output->str, "ANS_LENGTH") != 0) {
         buf = strstr(mplayer_output->str, "ANS_LENGTH");
-        sscanf(buf, "ANS_LENGTH=%f", &idledata->length);
+        sscanf(buf, "ANS_LENGTH=%lf", &idledata->length);
 		g_idle_add(set_progress_time,idledata);
     }
 	
     if (strstr(mplayer_output->str, "ANS_TIME_POSITION") != 0) {
         buf = strstr(mplayer_output->str, "ANS_TIME_POSITION");
-        sscanf(buf, "ANS_TIME_POSITION=%f", &idledata->position);
+        sscanf(buf, "ANS_TIME_POSITION=%lf", &idledata->position);
 		g_idle_add(set_progress_time,idledata);
     }
 	
     if (strstr(mplayer_output->str, "ANS_volume") != 0) {
         buf = strstr(mplayer_output->str, "ANS_volume");
         sscanf(buf, "ANS_volume=%i", &volume);
+		idledata->volume = volume;
         buf = g_strdup_printf(_("Volume %i%%"), volume);
 		g_strlcpy(idledata->vol_tooltip,buf,128);
 		g_idle_add(set_volume_tip,idledata);
@@ -278,6 +281,9 @@ gpointer launch_player(gpointer data) {
 	idledata->x = 1;
 	idledata->y = 1;
 	idledata->videopresent = 1;
+	idledata->volume = 100.0;
+	idledata->length = 0.0;
+	
 	g_idle_add(set_progress_value,idledata);
 	g_idle_add(set_progress_text,idledata);
 	g_idle_add(set_media_info,idledata);
@@ -291,14 +297,14 @@ gpointer launch_player(gpointer data) {
 		argv[arg++] = g_strdup_printf("-profile");
 		argv[arg++] = g_strdup_printf("gnome-mplayer");
 	}
-    argv[arg++] = g_strdup_printf("-zoom");
+    // argv[arg++] = g_strdup_printf("-zoom");
     argv[arg++] = g_strdup_printf("-quiet");
     argv[arg++] = g_strdup_printf("-slave");
     argv[arg++] = g_strdup_printf("-softvol");
     argv[arg++] = g_strdup_printf("-nomouseinput");
     if (strcmp(threaddata->filename, "dvd://") != 0) {
-        argv[arg++] = g_strdup_printf("-cache");
-        argv[arg++] = g_strdup_printf("2048");
+       argv[arg++] = g_strdup_printf("-cache");
+       argv[arg++] = g_strdup_printf("%i", cache_size);
     }
     argv[arg++] = g_strdup_printf("-wid");
     player_window = get_player_window();

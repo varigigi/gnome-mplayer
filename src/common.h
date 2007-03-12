@@ -25,6 +25,7 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#define CACHE_SIZE		"/apps/gnome-mplayer/preferences/cache_size"
 
 typedef enum {
     PLAYING,
@@ -47,8 +48,8 @@ typedef struct _IdleData {
 	gint videopresent;
 	gboolean fullscreen;
 	gboolean showcontrols;
-	gfloat position;
-	gfloat length;
+	gdouble position;
+	gdouble length;
 } IdleData;
 
 IdleData *idledata;
@@ -61,6 +62,7 @@ typedef struct _ThreadData {
 	gint playlist;
 } ThreadData;
 
+gint cache_size;
 gint streaming;
 gint showcontrols;
 gint fullscreen;
@@ -88,11 +90,15 @@ gboolean set_media_info(void *data);
 gboolean set_progress_value(void *data);
 gboolean set_progress_text(void *data);
 gboolean set_progress_time(void *data);
+gboolean set_volume_from_slider(gpointer data);
 gboolean set_volume_tip(void *data);
 gboolean resize_window(void *data);
 gboolean set_play(void *data);
 gboolean set_pause(void *data);
 gboolean set_stop(void *data);
+gboolean set_ff(void *data);
+gboolean set_rew(void *data);
+gboolean set_position(void *data);
 gboolean set_volume(void *data);
 gboolean set_fullscreen(void *data);
 gboolean set_show_controls(void *data);

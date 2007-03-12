@@ -186,6 +186,24 @@ gboolean set_progress_time(void *data) {
 	return FALSE;
 }	
 
+gboolean set_volume_from_slider(gpointer data)
+{
+    gint vol;
+    gchar *cmd;
+
+    vol = (gint) gtk_range_get_value(GTK_RANGE(vol_slider));
+    cmd = g_strdup_printf("volume %i 1\n", vol);
+	send_command(cmd);
+    g_free(cmd);
+	if (state == PAUSED || state == STOPPED) {
+		send_command("pause\n");
+	}
+
+	send_command("get_property volume\n");
+	
+	return FALSE;
+}
+
 gboolean set_volume_tip(void *data) {
 	
 	IdleData *idle = (IdleData*)data;
@@ -234,12 +252,41 @@ gboolean set_stop(void *data) {
 	return FALSE;
 }
 
+gboolean set_ff(void *data) {
+
+	ff_callback(NULL, NULL, NULL); // ok is just not NULL which is what we want
+	return FALSE;
+}
+
+gboolean set_rew(void *data) {
+
+	rew_callback(NULL, NULL, NULL); // ok is just not NULL which is what we want
+	return FALSE;
+}
+
+gboolean set_position(void *data) {
+    gchar *cmd;
+	IdleData *idle = (IdleData*)data;
+
+    cmd = g_strdup_printf("seek %5.0f 2\n", idle->position);
+	send_command(cmd);
+    g_free(cmd);
+	return FALSE;
+}
+
+
+
 gboolean set_volume(void *data) {
 	IdleData *idle = (IdleData*)data;
+	gchar *buf;
 	
 	if (GTK_IS_WIDGET(vol_slider)) {
 		printf("setting slider to %f\n",idle->volume);
 		gtk_range_set_value(GTK_RANGE(vol_slider),idle->volume);
+        buf = g_strdup_printf(_("Volume %i%%"), (gint)idle->volume);
+		g_strlcpy(idledata->vol_tooltip,buf,128);
+		gtk_tooltips_set_tip(volume_tip, vol_slider, idle->vol_tooltip, NULL);
+		g_free(buf);
 	} 
 	return FALSE;
 }	
@@ -333,6 +380,8 @@ gboolean expose_callback(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	// to do with mplayer grabbing the drawing_area.
 	
 	//printf("expose callback\n");
+	while(gtk_events_pending()) gtk_main_iteration();
+
 	if (GDK_IS_DRAWABLE(drawing_area->window)) {
 		gc = gdk_gc_new(drawing_area->window);
 		gdk_drawable_get_size(GDK_DRAWABLE(drawing_area->window),&width,&height);
@@ -343,6 +392,38 @@ gboolean expose_callback(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	return FALSE;
 }
 
+gboolean window_state_callback(GtkWidget *widget, GdkEventWindowState *event, gpointer data)
+{
+	GdkGC *gc;
+	gint width,height;
+	
+	//printf("window state callback\n");
+	while(gtk_events_pending()) gtk_main_iteration();
+
+	if (GDK_IS_DRAWABLE(drawing_area->window)) {
+		gc = gdk_gc_new(drawing_area->window);
+		gdk_drawable_get_size(GDK_DRAWABLE(drawing_area->window),&width,&height);
+		//printf("drawing box %i x %i\n",width,height);
+		gdk_draw_rectangle(drawing_area->window, gc, TRUE, 0, 0, width,height );
+		gdk_gc_unref(gc);
+	}
+	return FALSE;
+}
+
+gboolean allocate_callback(GtkWidget *widget, GtkAllocation *allocation, gpointer data)
+{
+	GdkGC *gc;
+	
+	// printf("allocation callback\n");
+	while(gtk_events_pending()) gtk_main_iteration();
+		
+	if (GDK_IS_DRAWABLE(drawing_area->window)) {
+		gc = gdk_gc_new(drawing_area->window);
+		gdk_draw_rectangle(drawing_area->window, gc, TRUE, 0, 0, allocation->width,allocation->height );
+		gdk_gc_unref(gc);
+	}
+	return FALSE;
+}
 
 gboolean play_callback(GtkWidget * widget, GdkEventExpose * event, void *data)
 {
@@ -446,9 +527,10 @@ gboolean hookup_x11_events(void *data)
 	// draws over/erases them.
 	
 	//printf("hooking callbacks\n");
-    //g_signal_connect(G_OBJECT(drawing_area), "expose_event", G_CALLBACK(expose_callback), NULL);
-    //g_signal_connect(G_OBJECT(drawing_area), "configure_event", G_CALLBACK(expose_callback), NULL);
+    g_signal_connect(G_OBJECT(drawing_area), "expose_event", G_CALLBACK(expose_callback), NULL);
+    g_signal_connect(G_OBJECT(drawing_area), "size_allocate", G_CALLBACK(allocate_callback), NULL);
     g_signal_connect(G_OBJECT(window), "configure_event", G_CALLBACK(expose_callback), NULL);
+    g_signal_connect(G_OBJECT(window), "window_state_event", G_CALLBACK(window_state_callback), NULL);
 	
 	return FALSE;
 }
@@ -473,12 +555,21 @@ void vol_slider_callback(GtkRange * range, gpointer user_data)
 {
     gint vol;
     gchar *cmd;
+	gchar *buf;
 
     vol = (gint) gtk_range_get_value(range);
     cmd = g_strdup_printf("volume %i 1\n", vol);
 	send_command(cmd);
     g_free(cmd);
+	if (idledata->volume != vol) { 
+		
+        buf = g_strdup_printf(_("Volume %i%%"), vol);
+		g_strlcpy(idledata->vol_tooltip,buf,128);
+		g_idle_add(set_volume_tip,idledata);
+        g_free(buf);
+	}
 	send_command("get_property volume\n");
+	
 }
 
 
@@ -577,6 +668,7 @@ void menuitem_fs_callback(GtkMenuItem * menuitem, void *data)
 		gtk_window_fullscreen(GTK_WINDOW(window));
         fullscreen = 1;
     }
+	while(gtk_events_pending()) gtk_main_iteration();
 	if (GDK_IS_DRAWABLE(drawing_area->window)) {
 		gc = gdk_gc_new(drawing_area->window);
 		gdk_drawable_get_size(GDK_DRAWABLE(drawing_area->window),&width,&height);
@@ -604,7 +696,8 @@ void menuitem_showcontrols_callback(GtkCheckMenuItem * menuitem, void *data)
 }
 
 void config_apply(GtkWidget * widget, void *data){
-
+	GConfClient *gconf;
+	
 	if (vo != NULL){
 		g_free(vo);
 		vo = NULL;
@@ -618,6 +711,12 @@ void config_apply(GtkWidget * widget, void *data){
 	ao = g_strdup(gtk_entry_get_text(GTK_ENTRY(GTK_BIN(config_ao)->child)));
 	
 	update_mplayer_config();
+	
+	cache_size =	(int) gtk_range_get_value(GTK_RANGE(config_cachesize));
+	gconf = gconf_client_get_default();
+	gconf_client_set_int(gconf,CACHE_SIZE,cache_size,NULL);
+	g_object_unref(G_OBJECT(gconf));
+	
 	gtk_widget_destroy(widget);
 }
 
@@ -738,6 +837,17 @@ void menuitem_config_callback(GtkMenuItem * menuitem, void *data)
     gtk_table_attach_defaults(GTK_TABLE(conf_table), config_ao,
 			      1, 2, 1, 2);
 	
+    conf_label = gtk_label_new(_("Minimum Cache Size:"));
+    gtk_misc_set_alignment(GTK_MISC(conf_label), 0.0, 0.0);
+    gtk_table_attach_defaults(GTK_TABLE(conf_table), conf_label, 0, 1,
+			      2, 3);
+    gtk_widget_show(conf_label);
+    config_cachesize = gtk_hscale_new_with_range(0, 32767, 512);
+    gtk_table_attach_defaults(GTK_TABLE(conf_table),
+			      config_cachesize, 1, 2, 2, 3);
+    gtk_range_set_value(GTK_RANGE(config_cachesize),
+			cache_size);
+    gtk_widget_show(config_cachesize);
 	
 	
 	gtk_container_add(GTK_CONTAINER(conf_hbutton_box), conf_ok);

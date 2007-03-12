@@ -62,6 +62,8 @@ static DBusHandlerResult filter_func(DBusConnection * connection,
 	gchar *path1;
 	gchar *path2;
 	gchar *path3;
+	GString *xml;
+	gchar *xml_string;
 	
     message_type = dbus_message_get_type(message);
     sender = dbus_message_get_sender(message);
@@ -141,6 +143,26 @@ static DBusHandlerResult filter_func(DBusConnection * connection,
 				g_idle_add(set_stop,idledata);
 				return DBUS_HANDLER_RESULT_HANDLED;
 			}
+
+			if (g_ascii_strcasecmp(dbus_message_get_member(message),"FastForward") == 0  && idledata != NULL) {
+				g_idle_add(set_ff,idledata);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+
+			if (g_ascii_strcasecmp(dbus_message_get_member(message),"FastReverse") == 0  && idledata != NULL) {
+				g_idle_add(set_rew,idledata);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+
+			if (g_ascii_strcasecmp(dbus_message_get_member(message),"Seek") == 0  && idledata != NULL) {
+				dbus_error_init(&error);
+				if (dbus_message_get_args(message, &error, DBUS_TYPE_DOUBLE, &(idledata->position), DBUS_TYPE_INVALID)) {
+					g_idle_add(set_position,idledata);
+				} else {
+					dbus_error_free(&error);
+				}
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
 			
 			if (g_ascii_strcasecmp(dbus_message_get_member(message),"Terminate") == 0) {
 				shutdown();
@@ -171,6 +193,16 @@ static DBusHandlerResult filter_func(DBusConnection * connection,
 			if (g_ascii_strcasecmp(dbus_message_get_member(message),"SetPercent") == 0  && idledata != NULL) {
 				dbus_error_init(&error);
 				if (dbus_message_get_args(message, &error, DBUS_TYPE_DOUBLE, &(idledata->percent), DBUS_TYPE_INVALID)) {
+					g_idle_add(set_progress_value,idledata);
+				} else {
+					dbus_error_free(&error);
+				}
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+
+			if (g_ascii_strcasecmp(dbus_message_get_member(message),"SetCachePercent") == 0  && idledata != NULL) {
+				dbus_error_init(&error);
+				if (dbus_message_get_args(message, &error, DBUS_TYPE_DOUBLE, &(idledata->cachepercent), DBUS_TYPE_INVALID)) {
 					g_idle_add(set_progress_value,idledata);
 				} else {
 					dbus_error_free(&error);
@@ -237,7 +269,124 @@ static DBusHandlerResult filter_func(DBusConnection * connection,
 				g_free(path);
 				return DBUS_HANDLER_RESULT_HANDLED;
 			}
-
+		} else if (message_type == DBUS_MESSAGE_TYPE_METHOD_CALL) {
+			printf("Got member %s\n",dbus_message_get_member(message));
+			if (dbus_message_is_method_call (message, "org.freedesktop.DBus.Introspectable", "Introspect")) {
+				
+				xml = g_string_new ("<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
+                            "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"
+                            "<node>\n"
+                            "  <interface name=\"org.freedesktop.DBus.Introspectable\">\n"
+                            "    <method name=\"Introspect\">\n"
+                            "      <arg name=\"data\" direction=\"out\" type=\"s\"/>\n"
+                            "    </method>\n"
+                            "  </interface>\n");
+				
+				xml = g_string_append(xml,
+									  "<interface name=\"com.gnome.mplayer\">\n"
+									  "    <method name=\"Test\">\n"
+									  "    </method>\n"
+									  "    <method name=\"GetVolume\">\n"
+									  "    </method>\n"
+									  "    <method name=\"GetFullScreen\">\n"
+									  "    </method>\n"
+									  "    <method name=\"GetShowControls\">\n"
+									  "    </method>\n"
+									  "    <method name=\"GetTime\">\n"
+									  "    </method>\n"
+									  "    <method name=\"GetDuration\">\n"
+									  "    </method>\n"
+									  "    <method name=\"GetPercent\">\n"
+									  "    </method>\n"
+									  "    <method name=\"GetCacheSize\">\n"
+									  "    </method>\n"
+									  "    <signal name=\"Open\">\n"
+									  "        <arg name=\"url\" type=\"s\" />\n"									  
+									  "    </signal>\n"
+									  "    <signal name=\"OpenPlaylist\">\n"
+									  "        <arg name=\"url\" type=\"s\" />\n"									  
+									  "    </signal>\n"
+									  "    <signal name=\"OpenButton\">\n"
+									  "        <arg name=\"url\" type=\"s\" />\n"									  
+									  "        <arg name=\"hrefid\" type=\"s\" />\n"									  
+									  "    </signal>\n"
+									  "    <signal name=\"Close\">\n"
+									  "    </signal>\n"
+									  "    <signal name=\"Quit\">\n"
+									  "    </signal>\n"
+									  "    <signal name=\"ResizeWindow\">\n"
+									  "        <arg name=\"width\" type=\"i\" />\n"
+									  "        <arg name=\"height\" type=\"i\" />\n"
+									  "    </signal>\n"
+									  "  </interface>\n");
+				xml = g_string_append (xml, "</node>\n");
+				
+				xml_string = g_string_free(xml,FALSE);
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message,
+                                  DBUS_TYPE_STRING, &xml_string,
+                                  DBUS_TYPE_INVALID);
+				g_free(xml_string);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "Test")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "GetVolume")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message, DBUS_TYPE_DOUBLE, &idledata->volume, DBUS_TYPE_INVALID);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "GetFullScreen")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message, DBUS_TYPE_BOOLEAN, fullscreen, DBUS_TYPE_INVALID);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "GetShowControls")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message, DBUS_TYPE_BOOLEAN, fullscreen, DBUS_TYPE_INVALID);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "GetTime")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message, DBUS_TYPE_DOUBLE, &idledata->position, DBUS_TYPE_INVALID);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "GetDuration")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message, DBUS_TYPE_DOUBLE, &idledata->length, DBUS_TYPE_INVALID);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "GetPercent")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message, DBUS_TYPE_DOUBLE, &idledata->percent, DBUS_TYPE_INVALID);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
+			if (dbus_message_is_method_call (message, "com.gnome.mplayer", "GetCacheSize")) {
+				reply_message = dbus_message_new_method_return (message);
+				dbus_message_append_args (reply_message, DBUS_TYPE_INT32, &cache_size, DBUS_TYPE_INVALID);
+				dbus_connection_send (connection, reply_message, NULL);
+				dbus_message_unref(reply_message);
+				return DBUS_HANDLER_RESULT_HANDLED;
+			}
 		} else {
 			// printf("path didn't match\n");
 		}
@@ -255,7 +404,7 @@ void dbus_open_by_hrefid(gchar *hrefid) {
 	const gchar *id;
 	
 	id = g_strdup(hrefid);
-	path = g_strdup_printf("/window/%i",embed_window);
+	path = g_strdup_printf("/control/%i",control_id);
 	message = dbus_message_new_signal(path,"com.gecko.mediaplayer","RequestById");
 	dbus_message_append_args(message, DBUS_TYPE_STRING, &id, DBUS_TYPE_INVALID);
 	dbus_connection_send(connection,message,NULL);
@@ -268,12 +417,17 @@ void dbus_open_next() {
 	gchar *path;
 	DBusMessage *message;
 	
-	path = g_strdup_printf("/window/%i",embed_window);
+	path = g_strdup_printf("/control/%i",control_id);
 	message = dbus_message_new_signal(path,"com.gecko.mediaplayer","Next");
 	dbus_connection_send(connection,message,NULL);
 	dbus_message_unref(message);
 	g_free(path);
 	
+}
+
+gboolean GetProperty(gchar *property) {
+	
+	return TRUE;
 }
 
 gboolean dbus_hookup(gint windowid, gint controlid)
@@ -284,7 +438,7 @@ gboolean dbus_hookup(gint windowid, gint controlid)
     gchar *match;
 	gchar *path;
 	DBusMessage *reply_message;
-
+	
     dbus_error_init(&error);
     connection = dbus_bus_get(type, &error);
     if (connection == NULL) {
@@ -295,16 +449,22 @@ gboolean dbus_hookup(gint windowid, gint controlid)
     }
     dbus_connection_setup_with_g_main(connection, NULL);
 
+	// vtable.message_function = &message_handler;
+	
+	dbus_bus_request_name(connection,"com.gnome.mplayer",0,NULL);
+	// dbus_connection_register_object_path (connection,"/com/gnome/mplayer", &vtable,NULL);
+	
 	match = g_strdup_printf("type='signal',interface='com.gnome.mplayer'");
 	dbus_bus_add_match(connection, match, &error);	
     printf("Using match: %s\n", match);
     g_free(match);
 	
 	dbus_connection_add_filter(connection,filter_func,NULL,NULL);
-    printf("Proxy connections and Command connected\n");
+	
+	printf("Proxy connections and Command connected\n");
 
-	if (windowid != 0) {
-		path = g_strdup_printf("/window/%i",embed_window);
+	if (control_id != 0) {
+		path = g_strdup_printf("/control/%i",control_id);
 		reply_message = dbus_message_new_signal(path,"com.gecko.mediaplayer","Ready");
 		dbus_connection_send(connection,reply_message,NULL);
 		dbus_message_unref(reply_message);
