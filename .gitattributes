@@ -31,6 +31,7 @@ po/en.po -text
 po/es.gmo -text svneol=unset#unset
 po/es.po -text
 po/gnome-mplayer.pot -text
+po/sv.po -text
 src/Makefile.am -text
 src/Makefile.in -text
 src/common.h -text
