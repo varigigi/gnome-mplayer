@@ -3,6 +3,7 @@
 /COPYING -text
 /ChangeLog -text
 DOCS/tech/dbus.txt -text
+DOCS/tech/plugin-interaction.txt -text
 /INSTALL -text
 /Makefile.am -text
 /Makefile.in -text
