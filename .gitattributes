@@ -24,6 +24,14 @@ DOCS/tech/plugin-interaction.txt -text
 /missing -text
 /mkinstalldirs -text
 pixmaps/gnome_mplayer.xpm -text
+pixmaps/media-playback-pause.xpm -text
+pixmaps/media-playback-start.xpm -text
+pixmaps/media-playback-stop.xpm -text
+pixmaps/media-seek-backward.xpm -text
+pixmaps/media-seek-forward.xpm -text
+pixmaps/media-skip-backward.xpm -text
+pixmaps/media-skip-forward.xpm -text
+pixmaps/view-fullscreen.xpm -text
 po/ChangeLog -text
 po/Makefile.in.in -text
 po/POTFILES.in -text
