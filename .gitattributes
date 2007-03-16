@@ -16,6 +16,23 @@ DOCS/tech/plugin-interaction.txt -text
 /config.sub -text
 /configure -text
 /configure.in -text
+debian/Makefile.am -text
+debian/Makefile.in -text
+debian/changelog -text
+debian/compat -text
+debian/control -text
+debian/copyright -text
+debian/dirs -text
+debian/docs -text
+debian/files -text
+debian/gnome-mplayer.1 -text
+debian/gnome-mplayer.manpages -text
+debian/gnome-mplayer.postinst.debhelper -text
+debian/gnome-mplayer.postrm.debhelper -text
+debian/gnome-mplayer.substvars -text
+debian/menu -text
+debian/rules -text
+debian/watch -text
 /depcomp -text
 /gnome-mplayer.desktop -text
 /gnome-mplayer.png -text svneol=unset#unset
