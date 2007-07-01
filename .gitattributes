@@ -58,6 +58,7 @@ po/en.gmo -text svneol=unset#unset
 po/en.po -text
 po/es.gmo -text svneol=unset#unset
 po/es.po -text
+po/fr.po -text
 po/gnome-mplayer.pot -text
 po/ru.po -text
 po/sv.po -text
