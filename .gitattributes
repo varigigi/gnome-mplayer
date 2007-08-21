@@ -70,6 +70,8 @@ src/dbus-interface.h -text
 src/gui.c -text
 src/gui.h -text
 src/main.c -text
+src/playlist.c -text
+src/playlist.h -text
 src/support.c -text
 src/support.h -text
 src/thread.c -text
