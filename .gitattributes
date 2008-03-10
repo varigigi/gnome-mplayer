@@ -2,6 +2,7 @@
 /AUTHORS -text
 /COPYING -text
 /ChangeLog -text
+DOCS/keyboard_shortcuts.txt -text
 DOCS/tech/dbus.txt -text
 DOCS/tech/plugin-interaction.txt -text
 /INSTALL -text
