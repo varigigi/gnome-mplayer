@@ -64,6 +64,8 @@ po/ko.po -text
 po/pl.po -text
 po/pt_BR.po -text
 po/ru.po -text
+po/sr.po -text
+po/sr@latin.po -text
 po/sv.po -text
 po/zh_CN.po -text
 src/Makefile.am -text
