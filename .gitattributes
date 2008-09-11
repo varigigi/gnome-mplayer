@@ -55,6 +55,7 @@ pixmaps/view-fullscreen.xpm -text
 po/ChangeLog -text
 po/Makefile.in.in -text
 po/POTFILES.in -text
+po/de.po -text
 po/en.po -text
 po/es.po -text
 po/fr.po -text
