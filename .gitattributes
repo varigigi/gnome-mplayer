@@ -86,6 +86,11 @@ src/langlist.h -text
 src/libgmlib/gm_file.c -text
 src/libgmlib/gm_file.h -text
 src/libgmlib/gmlib.h -text
+src/libgmtk/gmtk.h -text
+src/libgmtk/gmtk_audio_meter.c -text
+src/libgmtk/gmtk_audio_meter.h -text
+src/libgmtk/gmtk_media_tracker.c -text
+src/libgmtk/gmtk_media_tracker.h -text
 src/main.c -text
 src/mime_types.h -text
 src/mntent_compat.c -text
