@@ -83,9 +83,13 @@ src/dbus-interface.h -text
 src/gui.c -text
 src/gui.h -text
 src/langlist.h -text
+src/libgmlib/Makefile.am -text
+src/libgmlib/Makefile.in -text
 src/libgmlib/gm_file.c -text
 src/libgmlib/gm_file.h -text
 src/libgmlib/gmlib.h -text
+src/libgmtk/Makefile.am -text
+src/libgmtk/Makefile.in -text
 src/libgmtk/gmtk.h -text
 src/libgmtk/gmtk_audio_meter.c -text
 src/libgmtk/gmtk_audio_meter.h -text
