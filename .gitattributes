@@ -87,6 +87,8 @@ src/libgmlib/Makefile.am -text
 src/libgmlib/Makefile.in -text
 src/libgmlib/gm_file.c -text
 src/libgmlib/gm_file.h -text
+src/libgmlib/gm_pref_store.c -text
+src/libgmlib/gm_pref_store.h -text
 src/libgmlib/gmlib.h -text
 src/libgmtk/Makefile.am -text
 src/libgmtk/Makefile.in -text
