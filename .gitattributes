@@ -11,6 +11,7 @@ DOCS/tech/plugin-interaction.txt -text
 /NEWS -text
 /README -text
 /aclocal.m4 -text
+/compile -text
 /config.guess -text
 /config.h -text
 /config.h.in -text
