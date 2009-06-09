@@ -39,6 +39,7 @@ debian/watch -text
 /gnome-mplayer.desktop -text
 /gnome-mplayer.png -text svneol=unset#unset
 /gnome-mplayer.schemas -text
+/gnome-mplayer.schemas.in -text
 /gnome-mplayer.spec.in -text
 /install-sh -text
 /ltmain.sh -text
