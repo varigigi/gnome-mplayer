@@ -36,6 +36,7 @@ debian/menu -text
 debian/rules -text
 debian/watch -text
 /depcomp -text
+/gnome-mplayer.1 -text
 /gnome-mplayer.desktop -text
 /gnome-mplayer.schemas -text
 /gnome-mplayer.schemas.in -text
