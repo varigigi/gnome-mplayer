@@ -41,6 +41,7 @@ debian/watch -text
 /gnome-mplayer.schemas -text
 /gnome-mplayer.schemas.in -text
 /gnome-mplayer.spec.in -text
+/gnome-mplayer.xml -text
 icons/16x16/Makefile.am -text
 icons/16x16/Makefile.in -text
 icons/16x16/gnome-mplayer.png -text
