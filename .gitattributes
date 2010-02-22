@@ -78,7 +78,9 @@ pixmaps/view-fullscreen.xpm -text
 po/ChangeLog -text
 po/Makefile.in.in -text
 po/POTFILES.in -text
+po/ar.po -text
 po/bg.po -text
+po/ca.po -text
 po/cs.po -text
 po/de.po -text
 po/el.po -text
@@ -86,7 +88,9 @@ po/en.po -text
 po/en_GB.po -text
 po/es.po -text
 po/fr.po -text
+po/gl.po -text
 po/gnome-mplayer.pot -text
+po/he.po -text
 po/hu.po -text
 po/it.po -text
 po/ja.po -text
@@ -94,6 +98,7 @@ po/ko.po -text
 po/lt.po -text
 po/nl.po -text
 po/pl.po -text
+po/pt.po -text
 po/pt_BR.po -text
 po/ro.po -text
 po/ru.po -text
