@@ -82,11 +82,16 @@ po/ar.po -text
 po/bg.po -text
 po/ca.po -text
 po/cs.po -text
+po/da.po -text
 po/de.po -text
 po/el.po -text
 po/en.po -text
 po/en_GB.po -text
 po/es.po -text
+po/et.po -text
+po/eu.po -text
+po/fi.po -text
+po/fo.po -text
 po/fr.po -text
 po/gl.po -text
 po/gnome-mplayer.pot -text
