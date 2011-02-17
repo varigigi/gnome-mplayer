@@ -107,6 +107,8 @@ src/gui.h -text
 src/langlist.h -text
 src/libgmlib/Makefile.am -text
 src/libgmlib/Makefile.in -text
+src/libgmlib/gm_audio.c -text
+src/libgmlib/gm_audio.h -text
 src/libgmlib/gm_file.c -text
 src/libgmlib/gm_file.h -text
 src/libgmlib/gm_parse.c -text
