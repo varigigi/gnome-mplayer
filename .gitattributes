@@ -11,6 +11,8 @@ DOCS/tech/plugin-interaction.txt -text
 /NEWS -text
 /README -text
 /aclocal.m4 -text
+/apps.gecko-mediaplayer.preferences.gschema.xml -text
+/apps.gnome-mplayer.preferences.gschema.xml -text
 /compile -text
 /config.guess -text
 /config.h -text
