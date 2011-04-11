@@ -81,7 +81,9 @@ po/fy.po -text
 po/gl.po -text
 po/gnome-mplayer.pot -text
 po/he.po -text
+po/hr.po -text
 po/hu.po -text
+po/id.po -text
 po/it.po -text
 po/ja.po -text
 po/ko.po -text
@@ -92,10 +94,13 @@ po/pt.po -text
 po/pt_BR.po -text
 po/ro.po -text
 po/ru.po -text
+po/si.po -text
 po/sr.po -text
 po/sr@latin.po -text
 po/sv.po -text
+po/th.po -text
 po/tr.po -text
+po/ug.po -text
 po/uk.po -text
 po/zh_CN.po -text
 po/zh_HK.po -text
