@@ -146,5 +146,3 @@ src/playlist.c -text
 src/playlist.h -text
 src/support.c -text
 src/support.h -text
-src/thread.c -text
-src/thread.h -text
