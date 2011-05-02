@@ -15,7 +15,6 @@ DOCS/tech/plugin-interaction.txt -text
 /apps.gnome-mplayer.preferences.gschema.xml -text
 /compile -text
 /config.guess -text
-/config.h -text
 /config.h.in -text
 /config.sub -text
 /configure -text
