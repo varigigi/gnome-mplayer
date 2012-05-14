@@ -118,6 +118,8 @@ src/main.c -text
 src/mime_types.h -text
 src/mntent_compat.c -text
 src/mntent_compat.h -text
+src/mpris-interface.c -text
+src/mpris-interface.h -text
 src/nautilus_property_page.c -text
 src/playlist.c -text
 src/playlist.h -text
