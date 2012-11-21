@@ -109,6 +109,8 @@ po/zh_TW.po -text
 src/Makefile.am -text
 src/Makefile.in -text
 src/common.h -text
+src/database.c -text
+src/database.h -text
 src/dbus-interface.c -text
 src/dbus-interface.h -text
 src/gui.c -text
