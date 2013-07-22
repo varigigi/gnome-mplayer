@@ -126,5 +126,7 @@ src/nautilus_property_page.c -text
 src/nemo_property_page.c -text
 src/playlist.c -text
 src/playlist.h -text
+src/property_page_common.c -text
+src/property_page_common.h -text
 src/support.c -text
 src/support.h -text
