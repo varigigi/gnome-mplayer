@@ -108,6 +108,7 @@ po/zh_HK.po -text
 po/zh_TW.po -text
 src/Makefile.am -text
 src/Makefile.in -text
+src/caja_property_page.c -text
 src/common.h -text
 src/database.c -text
 src/database.h -text
